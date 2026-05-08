@@ -1,0 +1,231 @@
+:root {
+    --bg-dark:   #0f172a;
+    --bg-light:  #f1f5f9;
+    --card-dark: rgba(15, 23, 42, 0.64);
+    --card-light: rgba(255, 255, 255, 0.85);
+    --text-dark: #e2e8f0;
+    --text-light: #0f172a;
+}
+
+/* ── Body ───────────────────────────────────────────────────────────────── */
+body {
+    transition: background-color .3s ease, color .3s ease;
+    overflow-x: hidden;
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
+}
+body.light {
+    background-color: var(--bg-light);
+    color: var(--text-light);
+}
+
+/* ── Glass card ─────────────────────────────────────────────────────────── */
+.glass {
+    background: var(--card-dark);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+body.light .glass {
+    background: var(--card-light);
+    border-color: rgba(100, 116, 139, 0.18);
+    box-shadow: 0 2px 16px rgba(15,23,42,0.07);
+}
+
+/* ── Pages ──────────────────────────────────────────────────────────────── */
+.page { display: none; }
+.page.active { display: block; animation: fade-in .3s ease; }
+@keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── Skeleton ───────────────────────────────────────────────────────────── */
+.skeleton {
+    background: linear-gradient(95deg, rgba(148,163,184,.14), rgba(148,163,184,.28), rgba(148,163,184,.14));
+    background-size: 200% 100%;
+    animation: shimmer 1.2s infinite;
+}
+@keyframes shimmer { 0% { background-position: 160% 0; } 100% { background-position: -160% 0; } }
+
+/* ── Navbar ─────────────────────────────────────────────────────────────── */
+.nav-shadow { box-shadow: 0 10px 35px rgba(15, 23, 42, 0.18); }
+#mainNavbar {
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+}
+body.light #mainNavbar {
+    background: rgba(241, 245, 249, 0.95);
+    border-bottom: 1px solid rgba(100, 116, 139, 0.18);
+    box-shadow: 0 2px 12px rgba(15,23,42,0.08);
+}
+#mainNavbar.scrolled {
+    background: rgba(15, 23, 42, 0.97) !important;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+    border-bottom-color: rgba(148,163,184,0.14);
+}
+body.light #mainNavbar.scrolled {
+    background: rgba(241, 245, 249, 0.99) !important;
+    box-shadow: 0 4px 20px rgba(15,23,42,0.12);
+}
+
+/* ── Navbar text/buttons (light mode) ───────────────────────────────────── */
+body.light #mainNavbar button,
+body.light #mainNavbar span,
+body.light #mainNavbar p,
+body.light #mainNavbar a { color: #0f172a; }
+body.light #mainNavbar .text-cyan-300 { color: #0e7490 !important; }
+body.light #mainNavbar .text-slate-400 { color: #475569 !important; }
+
+/* ── Tour card ───────────────────────────────────────────────────────────── */
+.tour-card { transition: transform .2s ease, box-shadow .2s ease; }
+.tour-card:hover { transform: translateY(-6px); box-shadow: 0 14px 32px rgba(14,116,144,.22); }
+
+/* ── Light mode — chữ rõ ràng trên nền sáng ─────────────────────────────── */
+/* Tailwind slate-300/400/500 quá nhạt trên nền trắng → override */
+body.light .text-slate-300  { color: #334155 !important; }
+body.light .text-slate-400  { color: #475569 !important; }
+body.light .text-slate-500  { color: #64748b !important; }
+body.light .text-slate-200  { color: #1e293b !important; }
+body.light .text-white      { color: #0f172a !important; }
+body.light .text-white\/80 { color: #1e293b !important; }
+
+/* Headings và text quan trọng */
+body.light h1, body.light h2, body.light h3,
+body.light h4, body.light .font-bold,
+body.light .font-black, body.light .font-semibold { color: #0f172a; }
+
+/* Giữ màu accent quan trọng */
+body.light .text-cyan-300  { color: #0e7490 !important; }
+body.light .text-cyan-400  { color: #0891b2 !important; }
+body.light .text-emerald-300 { color: #059669 !important; }
+body.light .text-emerald-400 { color: #047857 !important; }
+body.light .text-rose-300  { color: #e11d48 !important; }
+body.light .text-rose-400  { color: #be123c !important; }
+body.light .text-amber-300 { color: #d97706 !important; }
+body.light .text-amber-400 { color: #b45309 !important; }
+body.light .text-indigo-300 { color: #4338ca !important; }
+
+/* Giá tiền */
+body.light .text-cyan-300.text-3xl,
+body.light .text-cyan-300.text-2xl,
+body.light .text-cyan-300.text-xl { color: #0e7490 !important; }
+
+/* ── Light mode — input / textarea ──────────────────────────────────────── */
+body.light input,
+body.light textarea {
+    background-color: rgba(255,255,255,0.9) !important;
+    border-color: rgba(100,116,139,0.3) !important;
+    color: #0f172a !important;
+}
+body.light input::placeholder,
+body.light textarea::placeholder { color: #94a3b8 !important; }
+body.light input:focus,
+body.light textarea:focus { border-color: #0891b2 !important; }
+
+/* ── Light mode — bg overlays ────────────────────────────────────────────── */
+body.light .bg-white\/5  { background-color: rgba(15,23,42,0.04) !important; }
+body.light .bg-white\/10 { background-color: rgba(15,23,42,0.07) !important; }
+body.light .bg-white\/20 { background-color: rgba(15,23,42,0.12) !important; }
+body.light .border-white\/10 { border-color: rgba(100,116,139,0.2) !important; }
+body.light .border-white\/15 { border-color: rgba(100,116,139,0.25) !important; }
+
+/* ── Light mode — tour cards ─────────────────────────────────────────────── */
+body.light .tour-card { box-shadow: 0 2px 12px rgba(15,23,42,0.08); }
+body.light .tour-card:hover { box-shadow: 0 10px 28px rgba(14,116,144,0.18); }
+body.light .tour-card h4 { color: #0f172a !important; }
+body.light .tour-card .text-slate-400 { color: #475569 !important; }
+body.light .tour-card .text-cyan-300 { color: #0e7490 !important; }
+
+/* ── Light mode — booking panel ─────────────────────────────────────────── */
+body.light #bookingPanel label { color: #334155 !important; }
+body.light #bookingPanel .text-slate-300 { color: #334155 !important; }
+body.light #bookingPanel .text-slate-400 { color: #475569 !important; }
+body.light #bookingPanel .text-slate-500 { color: #64748b !important; }
+body.light .payment-option { border-color: rgba(100,116,139,0.25) !important; color: #1e293b !important; }
+body.light .payment-option span { color: #1e293b !important; }
+
+/* ── Light mode — detail page ────────────────────────────────────────────── */
+body.light #detailGrid .text-slate-300 { color: #334155 !important; }
+body.light #detailGrid .text-slate-400 { color: #475569 !important; }
+body.light #detailGrid .rounded-2xl.bg-white\/5 { background: rgba(15,23,42,0.04) !important; }
+
+/* ── Light mode — dropdown ───────────────────────────────────────────────── */
+body.light #userDropdown { background: rgba(255,255,255,0.98) !important; }
+body.light #userDropdown button { color: #1e293b !important; }
+body.light #userDropdown button:hover { background: rgba(15,23,42,0.06) !important; }
+
+/* ── Timeline (My Bookings) ─────────────────────────────────────────────── */
+.timeline-step.active  { border-color: rgba(34,197,94,.7); color: #34d399; background: rgba(16,185,129,.14); }
+.timeline-step.pending { border-color: rgba(148,163,184,.45); color: #94a3b8; }
+body.light .timeline-step.active  { color: #059669 !important; border-color: rgba(5,150,105,.6) !important; }
+body.light .timeline-step.pending { color: #64748b !important; border-color: rgba(100,116,139,.4) !important; }
+
+/* ── Itinerary ───────────────────────────────────────────────────────────── */
+.itinerary-content p { margin-bottom: .75rem; line-height: 1.65; }
+.itinerary-content ul { list-style: disc; padding-left: 1.2rem; margin: .75rem 0; }
+.itinerary-content li { margin-bottom: .5rem; color: rgb(203 213 225); }
+body.light .itinerary-content li { color: #334155 !important; }
+body.light .itinerary-content p  { color: #334155 !important; }
+
+/* Rich itinerary (HTML từ admin) */
+.rich-itinerary { font-size: 13.5px; line-height: 1.75; color: #94a3b8; background: transparent !important; }
+/* Chặn bất kỳ inline style background nào từ admin copy-paste */
+.rich-itinerary *  { background-color: transparent !important; background-image: none !important; }
+/* Chỉ giữ background cho blockquote */
+.rich-itinerary blockquote { background: rgba(34,211,238,0.06) !important; }
+.rich-itinerary h1, .rich-itinerary h2, .rich-itinerary h3 { font-weight: 700; margin: 16px 0 8px; line-height: 1.35; }
+.rich-itinerary h1 { font-size: 17px; color: #67e8f9; }
+.rich-itinerary h2 { font-size: 15px; color: #67e8f9; padding-left: 10px; border-left: 3px solid #0e7490; }
+.rich-itinerary h3 { font-size: 13.5px; color: #93c5fd; }
+.rich-itinerary p  { margin: 6px 0; color: #cbd5e1; }
+.rich-itinerary ul, .rich-itinerary ol { padding-left: 18px; margin: 6px 0; }
+.rich-itinerary li { margin: 4px 0; color: #cbd5e1; }
+.rich-itinerary strong { color: #e2e8f0; font-weight: 600; }
+.rich-itinerary em { color: #94a3b8; font-style: italic; }
+.rich-itinerary blockquote { border-left: 3px solid #22d3ee; padding: 8px 14px; background: rgba(34,211,238,0.06); border-radius: 0 8px 8px 0; margin: 10px 0; color: #94a3b8; }
+.rich-itinerary hr { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 14px 0; }
+.rich-itinerary a { color: #22d3ee; }
+body.light .rich-itinerary { color: #334155 !important; }
+body.light .rich-itinerary h1 { color: #0e7490 !important; }
+body.light .rich-itinerary h2 { color: #0e7490 !important; border-left-color: #0e7490 !important; }
+body.light .rich-itinerary h3 { color: #1d4ed8 !important; }
+body.light .rich-itinerary p, body.light .rich-itinerary li { color: #334155 !important; }
+body.light .rich-itinerary strong { color: #0f172a !important; }
+
+/* ── Gallery ─────────────────────────────────────────────────────────────── */
+.gallery-thumb.active { border-color: rgba(34,211,238,0.95); box-shadow: 0 0 0 2px rgba(34,211,238,0.25); }
+
+/* ── Select ──────────────────────────────────────────────────────────────── */
+select { color: #e2e8f0 !important; background-color: #1e293b !important; border-color: rgba(148,163,184,0.25); }
+select option { color: #e2e8f0 !important; background-color: #1e293b !important; }
+select option:hover, select option:focus, select option:checked {
+    background-color: #0e7490 !important; color: #fff !important;
+    background: linear-gradient(#0e7490, #0e7490) !important;
+}
+body.light select { color: #0f172a !important; background-color: #fff !important; border-color: rgba(100,116,139,0.3) !important; }
+body.light select option { color: #0f172a !important; background-color: #fff !important; }
+body.light select option:hover, body.light select option:checked {
+    background-color: #0891b2 !important; color: #fff !important;
+    background: linear-gradient(#0891b2, #0891b2) !important;
+}
+#langSwitcher { color: #e2e8f0 !important; background-color: rgba(15,23,42,0.85) !important; }
+body.light #langSwitcher { color: #0f172a !important; background-color: rgba(255,255,255,0.9) !important; border-color: rgba(100,116,139,0.25) !important; }
+#bkPayment { color: #e2e8f0 !important; background-color: rgba(30,41,59,0.9) !important; }
+body.light #bkPayment { color: #0f172a !important; background-color: rgba(255,255,255,0.9) !important; }
+
+/* ── Chatbot ─────────────────────────────────────────────────────────────── */
+@keyframes dotBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+@keyframes msgFadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+#chatMessages::-webkit-scrollbar { width: 4px; }
+#chatMessages::-webkit-scrollbar-thumb { background: rgba(148,163,184,.2); border-radius: 2px; }
+.chat-msg { animation: msgFadeUp .25s ease; }
+.qr-btn {
+    background: rgba(34,211,238,.08); border: 1px solid rgba(34,211,238,.22);
+    border-radius: 20px; color: #67e8f9; font-size: 12px;
+    padding: 5px 12px; cursor: pointer;
+    transition: background .15s, border-color .15s; white-space: nowrap;
+}
+.qr-btn:hover { background: rgba(34,211,238,.18); border-color: rgba(34,211,238,.45); }
+body.light #chatPanel { background: rgba(248,250,252,0.98) !important; border-color: rgba(100,116,139,.2) !important; }
+body.light #chatInput { background: rgba(0,0,0,.04) !important; border-color: rgba(100,116,139,.2) !important; color: #0f172a !important; }
+body.light .qr-btn { color: #0e7490; background: rgba(14,116,144,.08); border-color: rgba(14,116,144,.25); }

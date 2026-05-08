@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Admin Dashboard - SmartTravel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode:"class", theme:{ extend:{ fontFamily:{ sans:["Inter","system-ui","sans-serif"] } } } };</script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body { font-family:'Inter',sans-serif; }
+        .glass { background:rgba(255,255,255,0.05); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.1); }
+        .stat-card { transition: transform .2s; }
+        .stat-card:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="dark font-sans antialiased bg-slate-900 text-white min-h-screen">
+
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="fixed inset-y-0 left-0 w-64 bg-slate-800/95 backdrop-blur-xl border-r border-white/10 z-40 flex flex-col">
+        <div class="flex h-20 items-center justify-center border-b border-white/10">
+            <div class="text-center">
+                <p class="text-xl font-black tracking-tight"><span class="text-cyan-300">Smart</span><span>Travel</span></p>
+                <p class="text-xs text-slate-400">Admin Panel</p>
+            </div>
+        </div>
+        <nav class="p-4 space-y-1 flex-1">
+            <a href="dashboard.html" class="flex items-center gap-3 rounded-xl px-4 py-3 bg-cyan-500/20 text-cyan-300">
+                <i class="fa-solid fa-chart-line w-5"></i><span class="font-semibold">Dashboard</span>
+            </a>
+            <a href="users.html" class="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-300 hover:bg-white/10 transition">
+                <i class="fa-solid fa-users w-5"></i><span class="font-semibold">Users</span>
+            </a>
+            <a href="tours.html" class="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-300 hover:bg-white/10 transition">
+                <i class="fa-solid fa-map-location-dot w-5"></i><span class="font-semibold">Tours</span>
+            </a>
+            <a href="bookings.html" class="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-300 hover:bg-white/10 transition">
+                <i class="fa-solid fa-ticket w-5"></i><span class="font-semibold">Bookings</span>
+            </a>
+            <a href="reviews.html" class="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-300 hover:bg-white/10 transition">
+                <i class="fa-solid fa-star w-5"></i><span class="font-semibold">Reviews</span>
+            </a>
+            <div class="pt-4 mt-4 border-t border-white/10">
+                <a href="../index.html" class="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-400 hover:bg-white/10 transition">
+                    <i class="fa-solid fa-arrow-left w-5"></i><span class="font-semibold">Back to Site</span>
+                </a>
+                <button onclick="doLogout()" class="w-full flex items-center gap-3 rounded-xl px-4 py-3 text-rose-400 hover:bg-rose-500/10 transition">
+                    <i class="fa-solid fa-right-from-bracket w-5"></i><span class="font-semibold">Đăng xuất</span>
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 ml-64 p-8">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-3xl font-black">Dashboard</h1>
+                <p class="text-slate-400 mt-1">Xin chào, <span id="adminNameDisplay" class="text-white font-semibold"></span>! Đây là tổng quan hôm nay.</p>
+            </div>
+            <!-- Date filter -->
+            <div class="glass rounded-xl px-4 py-2 flex items-center gap-3">
+                <i class="fa-solid fa-calendar text-slate-400 text-sm"></i>
+                <select id="yearFilter" onchange="applyFilters()"
+                        class="dark bg-slate-500 text-sm text-white focus:outline-none">
+                </select>
+                <select id="monthFilter" onchange="applyFilters()"
+                        class="dark bg-slate-500 text-sm text-white focus:outline-none">
+                    <option value="0">Cả năm</option>
+                    <option value="1">Tháng 1</option><option value="2">Tháng 2</option>
+                    <option value="3">Tháng 3</option><option value="4">Tháng 4</option>
+                    <option value="5">Tháng 5</option><option value="6">Tháng 6</option>
+                    <option value="7">Tháng 7</option><option value="8">Tháng 8</option>
+                    <option value="9">Tháng 9</option><option value="10">Tháng 10</option>
+                    <option value="11">Tháng 11</option><option value="12">Tháng 12</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+            <div class="glass rounded-2xl p-6 stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Người dùng</p>
+                        <p id="statUsers" class="text-3xl font-black text-cyan-300 mt-1">–</p>
+                        <p id="statUsersSub" class="text-xs text-slate-500 mt-1"></p>
+                    </div>
+                    <div class="h-12 w-12 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+                        <i class="fa-solid fa-users text-cyan-400 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="glass rounded-2xl p-6 stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Đơn đặt tour</p>
+                        <p id="statBookings" class="text-3xl font-black text-emerald-300 mt-1">–</p>
+                        <p id="statBookingsSub" class="text-xs text-slate-500 mt-1"></p>
+                    </div>
+                    <div class="h-12 w-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                        <i class="fa-solid fa-ticket text-emerald-400 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="glass rounded-2xl p-6 stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Doanh thu</p>
+                        <p id="statRevenue" class="text-3xl font-black text-amber-300 mt-1">–</p>
+                        <p id="statRevenueSub" class="text-xs text-slate-500 mt-1">chỉ đơn PAID/CONFIRMED</p>
+                    </div>
+                    <div class="h-12 w-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                        <i class="fa-solid fa-wallet text-amber-400 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="glass rounded-2xl p-6 stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Đánh giá</p>
+                        <p id="statReviews" class="text-3xl font-black text-indigo-300 mt-1">–</p>
+                        <p id="statReviewsSub" class="text-xs text-slate-500 mt-1"></p>
+                    </div>
+                    <div class="h-12 w-12 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+                        <i class="fa-solid fa-star text-indigo-400 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid gap-6 lg:grid-cols-3 mb-6">
+
+            <!-- Revenue Chart (line) -->
+            <div class="glass rounded-2xl p-6 lg:col-span-2">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold">Doanh thu theo tháng</h2>
+                        <p id="revenueChartSub" class="text-xs text-slate-400 mt-0.5"></p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="setChartType('line')" id="btnLine"
+                                class="px-3 py-1 rounded-lg text-xs font-semibold bg-cyan-500/30 text-cyan-300 transition">Đường</button>
+                        <button onclick="setChartType('bar')" id="btnBar"
+                                class="px-3 py-1 rounded-lg text-xs font-semibold bg-white/10 text-slate-400 transition">Cột</button>
+                    </div>
+                </div>
+                <div style="height:260px"><canvas id="revenueChart"></canvas></div>
+            </div>
+
+            <!-- Booking Status Pie -->
+            <div class="glass rounded-2xl p-6">
+                <h2 class="text-xl font-bold mb-1">Trạng thái đơn</h2>
+                <p class="text-xs text-slate-400 mb-4">Phân bổ theo trạng thái</p>
+                <div style="height:200px" class="flex items-center justify-center">
+                    <canvas id="statusChart"></canvas>
+                </div>
+                <div id="statusLegend" class="mt-4 space-y-2 text-xs"></div>
+            </div>
+        </div>
+
+        <!-- Bottom Row: Recent Bookings + Top Tours -->
+        <div class="grid gap-6 lg:grid-cols-3">
+            <!-- Recent Bookings -->
+            <div class="glass rounded-2xl p-6 lg:col-span-2">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold">Đơn đặt tour gần đây</h2>
+                    <a href="bookings.html" class="text-sm text-cyan-400 hover:text-cyan-300">Xem tất cả →</a>
+                </div>
+                <div id="recentBookingsList" class="space-y-2">
+                    <div class="text-center py-8 text-slate-500">
+                        <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i>Đang tải...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Tours + Quick Actions -->
+            <div class="space-y-6">
+                <div class="glass rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold">Top Tours</h2>
+                        <a href="tours.html" class="text-xs text-cyan-400 hover:text-cyan-300">Quản lý →</a>
+                    </div>
+                    <div id="topToursList" class="space-y-2">
+                        <div class="text-center py-4 text-slate-500 text-sm">
+                            <i class="fa-solid fa-spinner fa-spin mr-2"></i>Đang tải...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl p-6">
+                    <h2 class="text-lg font-bold mb-4">Thao tác nhanh</h2>
+                    <div class="space-y-2">
+                        <a href="tours.html" onclick="sessionStorage.setItem('openCreate','1')"
+                           class="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition">
+                            <div class="h-9 w-9 rounded-lg bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-plus text-cyan-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-sm">Thêm Tour mới</p>
+                                <p class="text-xs text-slate-400">Tạo tour du lịch</p>
+                            </div>
+                        </a>
+                        <a href="bookings.html"
+                           class="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition">
+                            <div class="h-9 w-9 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-list-check text-emerald-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-sm">Quản lý Booking</p>
+                                <p class="text-xs text-slate-400">Duyệt, cập nhật đơn</p>
+                            </div>
+                        </a>
+                        <a href="users.html"
+                           class="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition">
+                            <div class="h-9 w-9 rounded-lg bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-user-gear text-indigo-400 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-sm">Quản lý Users</p>
+                                <p class="text-xs text-slate-400">Phân quyền tài khoản</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    // ── Auth ──────────────────────────────────────────
+    (function() {
+        const token = localStorage.getItem("adminToken");
+        const role  = localStorage.getItem("adminRole");
+        if (!token || role !== "ADMIN") {
+            window.location.replace("/admin/login.html");
+            document.documentElement.style.display = "none";
+            throw new Error("Not authenticated");
+        }
+        document.getElementById("adminNameDisplay").textContent =
+            localStorage.getItem("adminName") || "Admin";
+    })();
+
+    const API = "/api";
+    let allBookings = [], allUsers = [], allReviews = [], allTours = [];
+    let revenueChart = null, statusChart = null;
+    let currentChartType = "line";
+
+    function doLogout() { localStorage.clear(); window.location.replace("/admin/login.html"); }
+
+    // ── Year filter init
+    (function initYearFilter() {
+        const sel = document.getElementById("yearFilter");
+        const now = new Date().getFullYear();
+        for (let y = now; y >= now - 3; y--) {
+            const opt = document.createElement("option");
+            opt.value = y; opt.textContent = "Năm " + y;
+            if (y === now) opt.selected = true;
+            sel.appendChild(opt);
+        }
+    })();
+
+    // ── API helper ────────────────────────────────────
+    async function api(path) {
+        const token = localStorage.getItem("adminToken");
+        const res = await fetch(API + path, { headers: { "Authorization": "Bearer " + token } });
+        if (res.status === 401 || res.status === 403) {
+            localStorage.clear(); window.location.replace("/admin/login.html"); return null;
+        }
+        return res.json();
+    }
+
+    const fmtPrice = v => Number(v || 0).toLocaleString("vi-VN") + "₫";
+    const fmtPriceShort = v => {
+        v = Number(v || 0);
+        if (v >= 1e9) return (v/1e9).toFixed(1) + "B";
+        if (v >= 1e6) return (v/1e6).toFixed(1) + "M";
+        return v.toLocaleString("vi-VN");
+    };
+
+    // ── Load all data ─────────────────────────────────
+    async function loadAll() {
+        const [usersRes, bookingsRes, reviewsRes, toursRes] = await Promise.all([
+            api("/users"),
+            api("/bookings/admin/all"),
+            api("/reviews"),
+            api("/tours")
+        ]);
+
+        allUsers    = usersRes?.data    || [];
+        allBookings = bookingsRes?.data || [];
+        allReviews  = reviewsRes?.data  || [];
+        allTours    = toursRes?.data    || [];
+
+        applyFilters();
+    }
+
+    // ── Apply date filters ────────────────────────────
+    function applyFilters() {
+        const year  = parseInt(document.getElementById("yearFilter").value);
+        const month = parseInt(document.getElementById("monthFilter").value); // 0=all
+
+        const filtered = allBookings.filter(b => {
+            const d = new Date(b.createdAt || b.departureDate || "");
+            if (!year) return true;
+            const yMatch = d.getFullYear() === year;
+            const mMatch = month === 0 || (d.getMonth() + 1) === month;
+            return yMatch && mMatch;
+        });
+
+        renderStats(filtered);
+        renderRevenueChart(filtered, year, month);
+        renderStatusChart(filtered);
+        renderRecentBookings(filtered);
+        renderTopTours();
+    }
+
+    // ── Stats cards ───────────────────────────────────
+    function renderStats(filtered) {
+        const revenue = filtered
+            .filter(b => ["PAID","CONFIRMED","COMPLETED"].includes(b.status))
+            .reduce((s, b) => s + Number(b.totalPrice || 0), 0);
+
+        document.getElementById("statUsers").textContent    = allUsers.length.toLocaleString();
+        document.getElementById("statBookings").textContent = filtered.length.toLocaleString();
+        document.getElementById("statRevenue").textContent  = fmtPriceShort(revenue) + "₫";
+        document.getElementById("statReviews").textContent  = allReviews.length.toLocaleString();
+
+        const paid = filtered.filter(b => ["PAID","CONFIRMED","COMPLETED"].includes(b.status)).length;
+        document.getElementById("statBookingsSub").textContent = `${paid} đã thanh toán`;
+
+        const avgRating = allReviews.length
+            ? (allReviews.reduce((s,r) => s + (r.rating || 0), 0) / allReviews.length).toFixed(1)
+            : "—";
+        document.getElementById("statReviewsSub").textContent = `⭐ ${avgRating} trung bình`;
+    }
+
+    // ── Revenue Chart ─────────────────────────────────
+    function renderRevenueChart(filtered, year, month) {
+        const ctx = document.getElementById("revenueChart").getContext("2d");
+
+        let labels, data;
+
+        if (month !== 0) {
+            // Show by day in that month
+            const daysInMonth = new Date(year, month, 0).getDate();
+            labels = Array.from({length: daysInMonth}, (_, i) => `${i+1}`);
+            data = labels.map((_, i) => {
+                const day = i + 1;
+                return filtered
+                    .filter(b => {
+                        const d = new Date(b.createdAt || "");
+                        return (d.getMonth()+1) === month && d.getDate() === day
+                            && ["PAID","CONFIRMED","COMPLETED"].includes(b.status);
+                    })
+                    .reduce((s,b) => s + Number(b.totalPrice || 0), 0);
+            });
+            document.getElementById("revenueChartSub").textContent =
+                `Tháng ${month}/${year} - theo ngày`;
+        } else {
+            // Show by month in year
+            labels = ["T1","T2","T3","T4","T5","T6","T7","T8","T9","T10","T11","T12"];
+            data = labels.map((_, i) => {
+                return filtered
+                    .filter(b => {
+                        const d = new Date(b.createdAt || "");
+                        return d.getFullYear() === year && d.getMonth() === i
+                            && ["PAID","CONFIRMED","COMPLETED"].includes(b.status);
+                    })
+                    .reduce((s,b) => s + Number(b.totalPrice || 0), 0);
+            });
+            document.getElementById("revenueChartSub").textContent = `Năm ${year} - theo tháng`;
+        }
+
+        if (revenueChart) revenueChart.destroy();
+
+        const gradient = ctx.createLinearGradient(0, 0, 0, 260);
+        gradient.addColorStop(0, "rgba(6,182,212,0.4)");
+        gradient.addColorStop(1, "rgba(6,182,212,0.0)");
+
+        revenueChart = new Chart(ctx, {
+            type: currentChartType,
+            data: {
+                labels,
+                datasets: [{
+                    label: "Doanh thu (₫)",
+                    data,
+                    borderColor: "rgb(6,182,212)",
+                    backgroundColor: currentChartType === "line" ? gradient : "rgba(6,182,212,0.5)",
+                    borderWidth: 2,
+                    pointBackgroundColor: "rgb(6,182,212)",
+                    pointRadius: 3,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => " " + fmtPrice(ctx.raw)
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: "rgba(255,255,255,0.05)" },
+                        ticks: { color: "#94a3b8", font: { size: 11 } }
+                    },
+                    y: {
+                        grid: { color: "rgba(255,255,255,0.05)" },
+                        ticks: {
+                            color: "#94a3b8", font: { size: 11 },
+                            callback: v => fmtPriceShort(v)
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function setChartType(type) {
+        currentChartType = type;
+        document.getElementById("btnLine").className = `px-3 py-1 rounded-lg text-xs font-semibold transition ${type==="line" ? "bg-cyan-500/30 text-cyan-300" : "bg-white/10 text-slate-400"}`;
+        document.getElementById("btnBar").className  = `px-3 py-1 rounded-lg text-xs font-semibold transition ${type==="bar"  ? "bg-cyan-500/30 text-cyan-300" : "bg-white/10 text-slate-400"}`;
+        applyFilters();
+    }
+
+    // ── Status Pie Chart ──────────────────────────────
+    function renderStatusChart(filtered) {
+        const statusColors = {
+            PENDING:   { bg:"rgba(251,191,36,0.8)",  label:"Chờ xử lý",     badge:"text-amber-400" },
+            PAID:      { bg:"rgba(52,211,153,0.8)",   label:"Đã thanh toán", badge:"text-emerald-400" },
+            CONFIRMED: { bg:"rgba(34,211,238,0.8)",   label:"Đã xác nhận",  badge:"text-cyan-400" },
+            COMPLETED: { bg:"rgba(99,102,241,0.8)",   label:"Hoàn thành",   badge:"text-indigo-400" },
+            CANCELLED: { bg:"rgba(248,113,113,0.8)",  label:"Đã hủy",       badge:"text-rose-400" },
+            FAILED:    { bg:"rgba(148,163,184,0.8)",  label:"Thất bại",     badge:"text-slate-400" }
+        };
+
+        const counts = {};
+        filtered.forEach(b => { counts[b.status] = (counts[b.status] || 0) + 1; });
+
+        const labels = Object.keys(counts);
+        const values = labels.map(l => counts[l]);
+        const bgColors = labels.map(l => statusColors[l]?.bg || "rgba(100,100,100,0.5)");
+
+        const ctx = document.getElementById("statusChart").getContext("2d");
+        if (statusChart) statusChart.destroy();
+
+        if (labels.length === 0) {
+            document.getElementById("statusLegend").innerHTML =
+                '<p class="text-slate-500 text-center">Không có dữ liệu</p>';
+            return;
+        }
+
+        statusChart = new Chart(ctx, {
+            type: "doughnut",
+            data: { labels, datasets: [{ data: values, backgroundColor: bgColors, borderWidth: 0, hoverOffset: 6 }] },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ` ${statusColors[ctx.label]?.label || ctx.label}: ${ctx.raw} đơn`
+                        }
+                    }
+                },
+                cutout: "68%"
+            }
+        });
+
+        const total = values.reduce((a,b) => a+b, 0);
+        document.getElementById("statusLegend").innerHTML = labels.map((l,i) => `
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 rounded-full flex-shrink-0" style="background:${bgColors[i]}"></span>
+                <span class="text-slate-300">${statusColors[l]?.label || l}</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="font-bold">${values[i]}</span>
+                <span class="text-slate-500">(${total ? Math.round(values[i]/total*100) : 0}%)</span>
+            </div>
+        </div>`).join("");
+    }
+
+    // ── Recent Bookings ───────────────────────────────
+    function renderRecentBookings(filtered) {
+        const el = document.getElementById("recentBookingsList");
+        const statusStyle = {
+            PENDING:   "bg-amber-500/20 text-amber-400",
+            PAID:      "bg-emerald-500/20 text-emerald-400",
+            CONFIRMED: "bg-cyan-500/20 text-cyan-400",
+            COMPLETED: "bg-indigo-500/20 text-indigo-400",
+            CANCELLED: "bg-rose-500/20 text-rose-400",
+            FAILED:    "bg-slate-500/20 text-slate-400"
+        };
+
+        const recent = [...filtered].sort((a,b) =>
+            new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+        ).slice(0, 6);
+
+        if (recent.length === 0) {
+            el.innerHTML = '<p class="text-slate-500 text-center py-6 text-sm">Không có đơn nào trong kỳ này</p>';
+            return;
+        }
+
+        el.innerHTML = recent.map(b => {
+            const tourName = b.tour?.name || b.tourName || "—";
+            const guestName = b.user?.fullName || b.guestName || "—";
+            return `
+        <div class="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-white/5 transition">
+            <div class="flex items-center gap-3">
+                <div class="h-9 w-9 rounded-lg bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-ticket text-cyan-400 text-sm"></i>
+                </div>
+                <div class="min-w-0">
+                    <p class="font-semibold text-sm truncate">${b.bookingCode || "N/A"}</p>
+                    <p class="text-xs text-slate-400 truncate">${guestName} · ${tourName}</p>
+                </div>
+            </div>
+            <div class="text-right flex-shrink-0 ml-3">
+                <p class="font-bold text-cyan-300 text-sm">${fmtPriceShort(b.totalPrice)}₫</p>
+                <span class="text-xs px-2 py-0.5 rounded-full ${statusStyle[b.status] || 'bg-slate-500/20 text-slate-400'}">
+                    ${b.status || 'PENDING'}
+                </span>
+            </div>
+        </div>`;
+        }).join("");
+    }
+
+    // ── Top Tours ─────────────────────────────────────
+    function renderTopTours() {
+        const el = document.getElementById("topToursList");
+        if (allTours.length === 0) {
+            el.innerHTML = '<p class="text-slate-500 text-sm text-center py-4">Chưa có tour</p>';
+            return;
+        }
+        const top = [...allTours]
+            .sort((a,b) => (b.totalReviews||0) - (a.totalReviews||0))
+            .slice(0, 5);
+        el.innerHTML = top.map((t,i) => `
+        <div class="flex items-center gap-3 py-2">
+            <span class="text-sm font-black text-slate-600 w-5 text-center">${i+1}</span>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold truncate">${t.name}</p>
+                <p class="text-xs text-slate-400">${t.destination} · ⭐ ${t.avgRating || 5.0}</p>
+            </div>
+            <span class="text-xs text-slate-400 flex-shrink-0">${t.totalReviews||0} reviews</span>
+        </div>`).join("");
+    }
+
+    // ── Init ──────────────────────────────────────────
+    loadAll();
+</script>
+</body>
+</html>
